@@ -14,6 +14,7 @@
   "typings": "dist/index.d.ts",
   "files": ["dist", "src"],
   "scripts": {
+    "build": "yarn run build:base",
     "build:base": "rollup -c",
     "build:nextjs": "rollup -c --config-sdk",
     "pretest": "tsc --noEmit",
