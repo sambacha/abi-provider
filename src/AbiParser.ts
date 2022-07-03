@@ -77,13 +77,13 @@ function parseDecoded(t: ParamType, value: any, index: number): ParsedValue {
   } else if (type === 'bool') {
     type = 'boolean';
   } else if (type === 'array') {
-    const array = [];
+    const array: any[] = [];
     for (let i = 0; i < value.length; i++) {
       array.push(parseDecoded(t.arrayChildren, value[i], i));
     }
     value = array;
   } else if (type === 'tuple') {
-    const array = [];
+    const array: any[] = [];
     for (let i = 0; i < value.length; i++) {
       array.push(parseDecoded(t.components[i], value[i], i));
     }
