@@ -1,9 +1,4 @@
-import {
-  Interface,
-  FunctionFragment,
-  FormatTypes,
-  Fragment,
-} from '@ethersproject/abi';
+import { Interface, FunctionFragment, FormatTypes, Fragment } from '@ethersproject/abi';
 import type { JsonFragment } from '@ethersproject/abi';
 export type AbiInput = Fragment | JsonFragment | string;
 
