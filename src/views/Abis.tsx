@@ -1,43 +1,43 @@
-import React, { FormEvent, useState } from 'react'
-import styled from 'styled-components'
-import { Colors, Font } from '../../design'
-import { useUserAbis } from '../../hooks'
-import type { AbiEntry } from '../../providers/abi/AbiEntry'
-import { DEFAULT_ENTRIES } from '../../providers/abi/AbiProvider'
-import { Page, Text } from '../shared'
-import { SubmitButton } from '../shared/SubmitButton'
-import { parseAbiInput } from './parseAbiInput'
+import React, { FormEvent, useState } from 'react';
+import styled from 'styled-components';
+import { Colors, Font } from '../../design';
+import { useUserAbis } from '../../hooks';
+import type { AbiEntry } from '../../providers/abi/AbiEntry';
+import { DEFAULT_ENTRIES } from '../../providers/abi/AbiProvider';
+import { Page, Text } from '../shared';
+import { SubmitButton } from '../shared/SubmitButton';
+import { parseAbiInput } from './parseAbiInput';
 
 interface Props {
-  onNavigate: (page: string) => void
+  onNavigate: (page: string) => void;
 }
 
 const PLACEHOLDER =
   'Paste ABI as JSON or solidity function signatures, one per line, e.g:\n' +
   'function balanceOf(address owner) view returns (uint)\n' +
-  'function allowance(address owner, address spender) view returns (uint)'
+  'function allowance(address owner, address spender) view returns (uint)';
 
 export function Abis({ onNavigate }: Props) {
-  const [abis, setAbis] = useUserAbis()
-  const [text, setText] = useState('')
-  const [error, setError] = useState('')
+  const [abis, setAbis] = useUserAbis();
+  const [text, setText] = useState('');
+  const [error, setError] = useState('');
 
   function onSubmit(e: FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const entries = parseAbiInput(text)
+      const entries = parseAbiInput(text);
       if (entries.length > 0) {
-        setAbis([...entries, ...abis])
+        setAbis([...entries, ...abis]);
       }
-      setText('')
-      setError('')
+      setText('');
+      setError('');
     } catch {
-      setError('Cannot parse input data')
+      setError('Cannot parse input data');
     }
   }
 
   function remove(i: number) {
-    setAbis(abis.filter((x, index) => index !== i))
+    setAbis(abis.filter((x, index) => index !== i));
   }
 
   return (
@@ -45,11 +45,16 @@ export function Abis({ onNavigate }: Props) {
       <Wrapper>
         <Title>ABI Manager</Title>
         <Text>
-          ABIs are used to parse call data. Adding ABIs from your contracts will allow you to easily inspect method
-          calls that your application is making.
+          ABIs are used to parse call data. Adding ABIs from your contracts will allow you to easily
+          inspect method calls that your application is making.
         </Text>
         <form onSubmit={onSubmit}>
-          <TextArea value={text} onChange={(e) => setText(e.target.value)} placeholder={PLACEHOLDER} rows={6} />
+          <TextArea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={PLACEHOLDER}
+            rows={6}
+          />
           <Controls>
             <SubmitButton type="submit" value="Add ABIs" />
             <ErrorMessage>{error}</ErrorMessage>
@@ -65,7 +70,7 @@ export function Abis({ onNavigate }: Props) {
         </AbiList>
       </Wrapper>
     </Page>
-  )
+  );
 }
 
 function getAbis(userAbis: AbiEntry[]) {
@@ -73,15 +78,15 @@ function getAbis(userAbis: AbiEntry[]) {
     ...entry,
     disabled: true,
     shadowed: userAbis.some((x) => x.selector === entry.selector),
-  }))
-  const selectors = new Set<string>()
+  }));
+  const selectors = new Set<string>();
   return userAbis
     .map((entry) => {
-      const shadowed = selectors.has(entry.selector)
-      selectors.add(entry.selector)
-      return { ...entry, shadowed, disabled: false }
+      const shadowed = selectors.has(entry.selector);
+      selectors.add(entry.selector);
+      return { ...entry, shadowed, disabled: false };
     })
-    .concat(builtIn)
+    .concat(builtIn);
 }
 
 const Wrapper = styled.div`
@@ -89,13 +94,13 @@ const Wrapper = styled.div`
   height: 100%;
   padding: 8px;
   line-height: 1.5;
-`
+`;
 
 const Title = styled.p`
   margin: 0 0 15px 0;
   font-size: 18px;
   font-weight: bold;
-`
+`;
 
 const TextArea = styled.textarea`
   width: 100%;
@@ -107,18 +112,18 @@ const TextArea = styled.textarea`
   font-family: ${Font.Code};
   font-size: inherit;
   line-height: 1.25;
-`
+`;
 
 const Controls = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 15px;
-`
+`;
 
 const ErrorMessage = styled.div`
   margin-left: 16px;
   color: ${Colors.Error};
-`
+`;
 
 const AbiList = styled.ol`
   list-style-type: none;
@@ -127,7 +132,7 @@ const AbiList = styled.ol`
   border: 1px solid ${Colors.Border};
   border-bottom: none;
   margin-bottom: 15px;
-`
+`;
 
 const AbiItem = styled.li`
   display: flex;
@@ -144,7 +149,7 @@ const AbiItem = styled.li`
   &.disabled {
     background-color: ${Colors.Background2};
   }
-`
+`;
 
 const Signature = styled.div`
   flex: 1;
@@ -157,7 +162,7 @@ const Signature = styled.div`
   &.shadowed {
     text-decoration: line-through;
   }
-`
+`;
 
 const Remove = styled.button`
   background: none;
@@ -169,4 +174,4 @@ const Remove = styled.button`
   cursor: pointer;
   padding: 0;
   margin-left: 8px;
-`
+`;

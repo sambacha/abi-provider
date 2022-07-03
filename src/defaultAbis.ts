@@ -83,7 +83,7 @@ const MULTICALL_ABI = [
     stateMutability: 'view',
     type: 'function',
   },
-]
+];
 
 const ERC20_ABI = [
   {
@@ -257,6 +257,6 @@ const ERC20_ABI = [
     stateMutability: 'view',
     type: 'function',
   },
-]
+];
 
-export const DEFAULT_ABIS = [...ERC20_ABI, ...MULTICALL_ABI]
+export const DEFAULT_ABIS = [...ERC20_ABI, ...MULTICALL_ABI];

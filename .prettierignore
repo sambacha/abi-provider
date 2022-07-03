@@ -1,0 +1,9 @@
+dist/
+build/
+coverage/
+test_data/
+*.min.js
+*.json
+*.html
+*.css
+
