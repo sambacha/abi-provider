@@ -26,8 +26,7 @@
     "lib": [
       "esnext",
       "dom"
-    ],
-    "types": ["@types/chrome", "@types/react", "@types/react-dom", "lib.esnext.d.ts"]
+    ]
   },
   "paths": {
     "@/*": [
