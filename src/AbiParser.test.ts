@@ -1,58 +1,63 @@
-import { expect } from 'chai'
-import { Interface } from '@ethersproject/abi'
-import { AbiParser } from './AbiParser'
+import { expect } from 'chai';
+import { Interface } from '@ethersproject/abi';
+import { AbiParser } from './AbiParser';
 
 describe('AbiParser', () => {
   describe('name', () => {
-    const abis = ['function foo(uint) view returns (bool)', 'function bar()']
-    const coder = new Interface(abis)
-    const parser = AbiParser.fromAbis(abis)
+    const abis = ['function foo(uint) view returns (bool)', 'function bar()'];
+    const coder = new Interface(abis);
+    const parser = AbiParser.fromAbis(abis);
 
     it('unknown name', () => {
-      const { name } = parser.get('0xAABBCCDD')
-      expect(name).to.equal('aabbccdd')
-    })
+      const { name } = parser.get('0xAABBCCDD');
+      expect(name).to.equal('aabbccdd');
+    });
 
     it('known name', () => {
-      const { name } = parser.get(coder.getSighash('foo'))
-      expect(name).to.equal('foo')
-    })
-  })
+      const { name } = parser.get(coder.getSighash('foo'));
+      expect(name).to.equal('foo');
+    });
+  });
 
   describe('call data', () => {
     function encodeAndDecode(abi: string, args: any[]) {
-      const coder = new Interface([abi])
-      const parser = AbiParser.fromAbis([abi])
-      const fragment = coder.functions[Object.keys(coder.functions)[0]]
-      const data = coder.encodeFunctionData(fragment, args)
-      return parser.get(coder.getSighash(fragment)).parseCallData(data)
+      const coder = new Interface([abi]);
+      const parser = AbiParser.fromAbis([abi]);
+      const fragment = coder.functions[Object.keys(coder.functions)[0]];
+      const data = coder.encodeFunctionData(fragment, args);
+      return parser.get(coder.getSighash(fragment)).parseCallData(data);
     }
 
     it('unknown call with no arguments', () => {
-      const { parseCallData } = new AbiParser([]).get('0x12345678')
-      const result = parseCallData('0x12345678')
-      expect(result).to.deep.equal([])
-    })
+      const { parseCallData } = new AbiParser([]).get('0x12345678');
+      const result = parseCallData('0x12345678');
+      expect(result).to.deep.equal([]);
+    });
 
     it('unknown call', () => {
-      const { parseCallData } = new AbiParser([]).get('0x12345678')
-      const result = parseCallData('0x12345678aabbcc')
+      const { parseCallData } = new AbiParser([]).get('0x12345678');
+      const result = parseCallData('0x12345678aabbcc');
       expect(result).to.deep.equal([
         {
           type: 'bytes',
           name: 'data',
           value: 'aabbcc',
         },
-      ])
-    })
+      ]);
+    });
 
     it('empty call', () => {
-      const result = encodeAndDecode('function empty()', [])
-      expect(result).to.deep.equal([])
-    })
+      const result = encodeAndDecode('function empty()', []);
+      expect(result).to.deep.equal([]);
+    });
 
     it('named and unnamed arguments', () => {
-      const result = encodeAndDecode('function mixed(uint256 a, bool, bool c, uint256)', [1, false, true, 2])
+      const result = encodeAndDecode('function mixed(uint256 a, bool, bool c, uint256)', [
+        1,
+        false,
+        true,
+        2,
+      ]);
       expect(result).to.deep.equal([
         {
           type: 'number',
@@ -74,25 +79,25 @@ describe('AbiParser', () => {
           name: '#3',
           value: '2',
         },
-      ])
-    })
+      ]);
+    });
 
     it('treats input as unknown if it does not parse', () => {
-      const abi = ['function foo(uint)']
-      const coder = new Interface(abi)
-      const parser = AbiParser.fromAbis(abi)
-      const fragment = coder.functions[Object.keys(coder.functions)[0]]
-      const selector = coder.getSighash(fragment)
-      const data = selector + 'aabbcc'
-      const result = parser.get(selector).parseCallData(data)
+      const abi = ['function foo(uint)'];
+      const coder = new Interface(abi);
+      const parser = AbiParser.fromAbis(abi);
+      const fragment = coder.functions[Object.keys(coder.functions)[0]];
+      const selector = coder.getSighash(fragment);
+      const data = selector + 'aabbcc';
+      const result = parser.get(selector).parseCallData(data);
       expect(result).to.deep.equal([
         {
           type: 'bytes',
           name: 'data',
           value: 'aabbcc',
         },
-      ])
-    })
+      ]);
+    });
 
     describe('types', () => {
       const testCases = [
@@ -295,63 +300,65 @@ describe('AbiParser', () => {
             },
           ],
         },
-      ]
+      ];
 
       for (const testCase of testCases) {
         it(testCase.inputType, () => {
-          const result = encodeAndDecode(`function foo(${testCase.inputType})`, [testCase.inputValue])
+          const result = encodeAndDecode(`function foo(${testCase.inputType})`, [
+            testCase.inputValue,
+          ]);
           expect(result).to.deep.equal([
             {
               type: testCase.outputType,
               name: '#0',
               value: testCase.outputValue,
             },
-          ])
-        })
+          ]);
+        });
       }
-    })
-  })
+    });
+  });
 
   describe('call result', () => {
     function encodeAndDecode(abi: string, args: any[]) {
-      const coder = new Interface([abi])
-      const parser = AbiParser.fromAbis([abi])
-      const fragment = coder.functions[Object.keys(coder.functions)[0]]
-      const data = coder.encodeFunctionResult(fragment, args)
-      return parser.get(coder.getSighash(fragment)).parseCallResult(data)
+      const coder = new Interface([abi]);
+      const parser = AbiParser.fromAbis([abi]);
+      const fragment = coder.functions[Object.keys(coder.functions)[0]];
+      const data = coder.encodeFunctionResult(fragment, args);
+      return parser.get(coder.getSighash(fragment)).parseCallResult(data);
     }
 
     it('unknown call result', () => {
-      const { parseCallResult } = new AbiParser([]).get('0xAABBCCDD')
-      const result = parseCallResult('0x1A2B3C')
+      const { parseCallResult } = new AbiParser([]).get('0xAABBCCDD');
+      const result = parseCallResult('0x1A2B3C');
       expect(result).to.deep.equal({
         type: 'bytes',
         name: '#0',
         value: '1a2b3c',
-      })
-    })
+      });
+    });
 
     it('unknown empty result', () => {
-      const { parseCallResult } = new AbiParser([]).get('0xAABBCCDD')
-      const result = parseCallResult('')
+      const { parseCallResult } = new AbiParser([]).get('0xAABBCCDD');
+      const result = parseCallResult('');
       expect(result).to.deep.equal({
         type: 'bytes',
         name: '#0',
         value: '',
-      })
-    })
+      });
+    });
 
     it('single result', () => {
-      const result = encodeAndDecode('function foo() returns (uint)', [1])
+      const result = encodeAndDecode('function foo() returns (uint)', [1]);
       expect(result).to.deep.equal({
         type: 'number',
         name: '#0',
         value: '1',
-      })
-    })
+      });
+    });
 
     it('multiple results', () => {
-      const result = encodeAndDecode('function foo() returns (uint, bool)', [1, false])
+      const result = encodeAndDecode('function foo() returns (uint, bool)', [1, false]);
       expect(result).to.deep.equal({
         type: 'tuple',
         name: '#0',
@@ -367,11 +374,11 @@ describe('AbiParser', () => {
             value: false,
           },
         ],
-      })
-    })
+      });
+    });
 
     it('named results', () => {
-      const result = encodeAndDecode('function foo() returns (uint a, bool b)', [1, false])
+      const result = encodeAndDecode('function foo() returns (uint a, bool b)', [1, false]);
       expect(result).to.deep.equal({
         type: 'tuple',
         name: '#0',
@@ -387,35 +394,35 @@ describe('AbiParser', () => {
             value: false,
           },
         ],
-      })
+      });
 
       it('no return value', () => {
-        const abi = ['function foo()']
-        const coder = new Interface(abi)
-        const parser = AbiParser.fromAbis(abi)
-        const fragment = coder.functions[Object.keys(coder.functions)[0]]
-        const data = 'aabbcc'
-        const result = parser.get(coder.getSighash(fragment)).parseCallResult(data)
+        const abi = ['function foo()'];
+        const coder = new Interface(abi);
+        const parser = AbiParser.fromAbis(abi);
+        const fragment = coder.functions[Object.keys(coder.functions)[0]];
+        const data = 'aabbcc';
+        const result = parser.get(coder.getSighash(fragment)).parseCallResult(data);
         expect(result).to.deep.equal({
           type: 'bytes',
           name: '#0',
           value: data,
-        })
-      })
+        });
+      });
 
       it('invalid return value', () => {
-        const abi = ['function foo() returns (bool)']
-        const coder = new Interface(abi)
-        const parser = AbiParser.fromAbis(abi)
-        const fragment = coder.functions[Object.keys(coder.functions)[0]]
-        const data = 'aabbcc'
-        const result = parser.get(coder.getSighash(fragment)).parseCallResult(data)
+        const abi = ['function foo() returns (bool)'];
+        const coder = new Interface(abi);
+        const parser = AbiParser.fromAbis(abi);
+        const fragment = coder.functions[Object.keys(coder.functions)[0]];
+        const data = 'aabbcc';
+        const result = parser.get(coder.getSighash(fragment)).parseCallResult(data);
         expect(result).to.deep.equal({
           type: 'bytes',
           name: '#0',
           value: data,
-        })
-      })
-    })
-  })
-})
+        });
+      });
+    });
+  });
+});

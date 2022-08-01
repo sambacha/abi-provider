@@ -1,14 +1,14 @@
-import { toAbiEntries } from '../../providers/abi/AbiEntry'
+import { toAbiEntries } from '../AbiEntry';
 
 export function parseAbiInput(input: string) {
-  let parsed
+  let parsed;
   try {
-    parsed = JSON.parse(input)
+    parsed = JSON.parse(input);
   } catch {
     parsed = input
       .split('\n')
       .map((x) => x.trim())
-      .filter((x) => x !== '')
+      .filter((x) => x !== '');
   }
-  return toAbiEntries(parsed)
+  return toAbiEntries(parsed);
 }

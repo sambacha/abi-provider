@@ -1,33 +1,35 @@
-import React, { createContext, ReactNode, useMemo } from 'react'
-import { useStorage } from '../../hooks'
-import { AbiEntry, toAbiEntries } from './AbiEntry'
-import { AbiParser } from './AbiParser'
-import { DEFAULT_ABIS } from './defaultAbis'
+import React, { createContext, useMemo } from 'react';
+import type { ReactNode } from 'react';
+import { useStorage } from './hooks/useStorage';
+import type { AbiEntry } from './AbiEntry';
+import { toAbiEntries } from './AbiEntry';
+import { AbiParser } from './AbiParser';
+import { DEFAULT_ABIS } from './defaultAbis';
 
 export interface AbiContextValue {
-  userAbis: AbiEntry[]
-  setUserAbis: (entries: AbiEntry[]) => void
-  parser: AbiParser
+  userAbis: AbiEntry[];
+  setUserAbis: (entries: AbiEntry[]) => void;
+  parser: AbiParser;
 }
 export const AbiContext = createContext<AbiContextValue>({
   userAbis: [],
   setUserAbis: () => undefined,
   parser: new AbiParser([]),
-})
-export const DEFAULT_ENTRIES = toAbiEntries(DEFAULT_ABIS)
+});
+export const DEFAULT_ENTRIES = toAbiEntries(DEFAULT_ABIS);
 
 interface Props {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export function AbiProvider({ children }: Props) {
-  const [userAbis = [], setUserAbis] = useStorage<AbiEntry[]>('userAbis')
+  const [userAbis = [], setUserAbis] = useStorage<AbiEntry[]>('userAbis');
   const value = useMemo(() => {
     return {
       userAbis,
       setUserAbis,
       parser: new AbiParser([...userAbis, ...DEFAULT_ENTRIES].reverse()),
-    }
-  }, [userAbis, setUserAbis])
-  return <AbiContext.Provider value={value} children={children} />
+    };
+  }, [userAbis, setUserAbis]);
+  return <AbiContext.Provider value={value} children={children} />;
 }
