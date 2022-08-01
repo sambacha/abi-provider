@@ -24,9 +24,10 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "lib": [
-      "esnext"
+      "esnext",
+      "dom"
     ],
-    "types": ["@types/chrome", "@types/react", "@types/react-dom"]
+    "types": ["@types/chrome", "@types/react", "@types/react-dom", "lib.esnext.d.ts"]
   },
   "paths": {
     "@/*": [
